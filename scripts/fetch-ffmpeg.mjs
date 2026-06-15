@@ -66,6 +66,29 @@ function download(url, dest) {
   });
 }
 
+function findFileRecursive(dir, fileName) {
+  const target = fileName.toLowerCase();
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      const found = findFileRecursive(fullPath, fileName);
+      if (found) return found;
+    } else if (entry.name.toLowerCase() === target) {
+      return fullPath;
+    }
+  }
+  return null;
+}
+
+function extractArchive(archivePath, tmpDir, asset) {
+  if (asset.endsWith(".zip")) {
+    // tar -xf works on macOS, Linux, and GitHub Actions Windows runners
+    execSync(`tar -xf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
+  } else {
+    execSync(`tar -xJf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
+  }
+}
+
 async function main() {
   const triple = getTargetTriple();
   const config = TARGET_MAP[triple];
@@ -94,26 +117,19 @@ async function main() {
   fs.rmSync(tmpDir, { recursive: true, force: true });
   fs.mkdirSync(tmpDir, { recursive: true });
 
-  if (config.asset.endsWith(".tar.xz")) {
-    execSync(`tar -xJf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
-  } else {
-    execSync(`unzip -q "${archivePath}" -d "${tmpDir}"`, { stdio: "inherit" });
-  }
+  extractArchive(archivePath, tmpDir, config.asset);
 
   const ffmpegName = config.ext ? "ffmpeg.exe" : "ffmpeg";
-  const found = execSync(`find "${tmpDir}" -name "${ffmpegName}" -type f`, {
-    encoding: "utf8",
-  })
-    .trim()
-    .split("\n")
-    .filter(Boolean)[0];
+  const found = findFileRecursive(tmpDir, ffmpegName);
 
   if (!found) {
-    throw new Error("ffmpeg binary not found in archive");
+    throw new Error(`ffmpeg binary not found in archive (looking for ${ffmpegName})`);
   }
 
   fs.copyFileSync(found, destPath);
-  fs.chmodSync(destPath, 0o755);
+  if (process.platform !== "win32") {
+    fs.chmodSync(destPath, 0o755);
+  }
 
   fs.rmSync(tmpDir, { recursive: true, force: true });
   fs.rmSync(archivePath, { force: true });
