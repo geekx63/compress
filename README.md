@@ -1,16 +1,23 @@
 # Compress
 
-Cross-platform desktop compression tool built with Tauri 2. Drag and drop files to compress video, audio, or images with sensible defaults — no manual ffmpeg install required.
+Cross-platform desktop compression tool built with Tauri 2. Drag files in, configure export settings, and compress video, audio, or images — no manual ffmpeg install required.
+
+## Usage
+
+1. Drag files into the app (or click to browse)
+2. Click **导出**
+3. Choose save directory; for video, pick target size (1920 / 2000 / original aspect ratio)
+4. Confirm to start export
 
 ## Features
 
-- **Video** — scale 2000px width, H.264 CRF 26 (`-tune animation -preset medium`) + AAC @ 96k
+- **Video** — scale width 1920 / 2000 / original, H.264 CRF 26 + AAC @ 96k
 - **Audio** — MP3 via LAME q:a 6, 16 kHz, metadata stripped
 - **Image** — TinyPNG-style pipeline:
   - PNG: `imagequant` (quality 65–80) + `oxipng`
   - JPEG: `mozjpeg` quality 82, progressive
 
-Output files are saved next to the source as `{name}_compressed.{ext}`. If compression would not reduce file size, the original is kept.
+Output files are saved to the chosen directory with the **original filename** (audio outputs as `{name}.mp3`). If compression would not reduce file size, the original is kept.
 
 ## Supported formats
 

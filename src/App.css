@@ -267,3 +267,191 @@ body {
 .ffmpeg-status.missing {
   color: #d93b3b;
 }
+
+.file-queue {
+  margin-top: 20px;
+}
+
+.file-queue h3 {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+}
+
+.file-queue ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #e8eaee;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.queue-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.queue-name {
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  color: #d93b3b;
+}
+
+.export-bar {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: #4f7cff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #3d6ae8;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #eef1f6;
+  color: #444;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #e2e6ed;
+}
+
+.btn-export {
+  min-width: 160px;
+}
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.dialog h2 {
+  margin: 0 0 20px;
+  font-size: 1.15rem;
+}
+
+.dialog-field {
+  margin-bottom: 18px;
+}
+
+.dialog-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.dir-picker {
+  display: flex;
+  gap: 8px;
+}
+
+.dir-picker input {
+  flex: 1;
+  border: 1px solid #dde1e8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  background: #f9fafb;
+  min-width: 0;
+}
+
+.dir-picker button {
+  background: #eef1f6;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #444;
+  cursor: pointer;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}

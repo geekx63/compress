@@ -7,8 +7,8 @@ export function DropZone({ onPickFiles }: DropZoneProps) {
     <div className="drop-zone" onClick={onPickFiles}>
       <div className="drop-zone-inner">
         <div className="drop-icon">↓</div>
-        <h2>Drop files here to compress</h2>
-        <p>Video · Audio · Image — or click to browse</p>
+        <h2>拖入文件到此处</h2>
+        <p>视频 · 音频 · 图片 — 或点击选择文件</p>
         <div className="format-badges">
           <span>MP4 MOV MKV</span>
           <span>WAV MP3 FLAC</span>

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use thiserror::Error;
 
@@ -51,6 +51,29 @@ pub struct ProgressPayload {
     pub message: String,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum VideoSize {
+    #[serde(rename = "w1920")]
+    W1920,
+    #[serde(rename = "w2000")]
+    W2000,
+    Original,
+}
+
+impl VideoSize {
+    pub fn from_str(s: &str) -> Result<Self, CompressError> {
+        match s {
+            "w1920" => Ok(Self::W1920),
+            "w2000" => Ok(Self::W2000),
+            "original" => Ok(Self::Original),
+            _ => Err(CompressError::UnsupportedFormat(format!(
+                "unknown video size: {s}"
+            ))),
+        }
+    }
+}
+
 #[derive(Debug, Error)]
 pub enum CompressError {
     #[error("unsupported file format: {0}")]
@@ -63,6 +86,8 @@ pub enum CompressError {
     Image(String),
     #[error("ffmpeg error: {0}")]
     Ffmpeg(String),
+    #[error("invalid output directory: {0}")]
+    InvalidOutputDir(String),
 }
 
 impl CompressError {
@@ -86,26 +111,37 @@ pub fn detect_kind(path: &Path) -> Result<CompressKind, CompressError> {
     }
 }
 
-pub fn output_path_for(input: &Path, kind: &CompressKind) -> PathBuf {
-    let parent = input.parent().unwrap_or_else(|| Path::new("."));
-    let stem = input
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("output");
+pub fn validate_output_dir(output_dir: &Path) -> Result<(), CompressError> {
+    if !output_dir.exists() {
+        return Err(CompressError::InvalidOutputDir(
+            "directory does not exist".to_string(),
+        ));
+    }
+    if !output_dir.is_dir() {
+        return Err(CompressError::InvalidOutputDir(
+            "path is not a directory".to_string(),
+        ));
+    }
+    Ok(())
+}
 
-    let ext = match kind {
-        CompressKind::Audio => "mp3",
-        CompressKind::Video => input
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("mp4"),
-        CompressKind::Image => input
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("png"),
+pub fn output_path_for(input: &Path, kind: &CompressKind, output_dir: &Path) -> PathBuf {
+    let file_name = match kind {
+        CompressKind::Audio => {
+            let stem = input
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("output");
+            format!("{stem}.mp3")
+        }
+        _ => input
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("output")
+            .to_string(),
     };
 
-    parent.join(format!("{stem}_compressed.{ext}"))
+    output_dir.join(file_name)
 }
 
 pub fn build_result(

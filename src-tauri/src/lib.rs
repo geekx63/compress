@@ -9,6 +9,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             commands::compress_file,
+            commands::detect_file_kind,
             commands::check_ffmpeg_ready,
             commands::open_output_folder,
         ])

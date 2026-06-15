@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 
-pub fn compress(input: &Path) -> Result<CompressResult, CompressError> {
+pub fn compress(input: &Path, output: &Path) -> Result<CompressResult, CompressError> {
     if !input.exists() {
         return Err(CompressError::NotFound(input.display().to_string()));
     }
@@ -16,7 +16,7 @@ pub fn compress(input: &Path) -> Result<CompressResult, CompressError> {
         .map(|e| e.to_ascii_lowercase())
         .ok_or_else(|| CompressError::UnsupportedFormat(input.display().to_string()))?;
 
-    let output = super::output_path_for(input, &CompressKind::Image);
+    let output = output.to_path_buf();
 
     match ext.as_str() {
         "png" => compress_png(input, &output)?,
@@ -27,6 +27,10 @@ pub fn compress(input: &Path) -> Result<CompressResult, CompressError> {
     }
 
     super::finalize_output(input, &output, &CompressKind::Image)
+}
+
+pub fn output_for(input: &Path, output_dir: &Path) -> std::path::PathBuf {
+    super::output_path_for(input, &super::CompressKind::Image, output_dir)
 }
 
 fn compress_png(input: &Path, output: &Path) -> Result<(), CompressError> {

@@ -7,13 +7,13 @@ pub async fn compress(
     app: &AppHandle,
     task_id: &str,
     input: &Path,
+    output: &Path,
 ) -> Result<CompressResult, CompressError> {
-    let output = output_path_for(input, &CompressKind::Audio);
     run_ffmpeg(
         app,
         task_id,
         input,
-        &output,
+        output,
         &[
             "-c:a",
             "libmp3lame",
@@ -27,5 +27,9 @@ pub async fn compress(
     )
     .await?;
 
-    finalize_output(input, &output, &CompressKind::Audio)
+    finalize_output(input, output, &CompressKind::Audio)
+}
+
+pub fn output_for(input: &Path, output_dir: &Path) -> std::path::PathBuf {
+    output_path_for(input, &CompressKind::Audio, output_dir)
 }
