@@ -4,7 +4,7 @@ Cross-platform desktop compression tool built with Tauri 2. Drag and drop files 
 
 ## Features
 
-- **Video** — scale 1920px width, H.264 CRF 26 (`-tune animation -preset medium`) + AAC @ 96k
+- **Video** — scale 2000px width, H.264 CRF 26 (`-tune animation -preset medium`) + AAC @ 96k
 - **Audio** — MP3 via LAME q:a 6, 16 kHz, metadata stripped
 - **Image** — TinyPNG-style pipeline:
   - PNG: `imagequant` (quality 65–80) + `oxipng`

@@ -16,7 +16,7 @@ pub async fn compress(
         &output,
         &[
             "-vf",
-            "scale=1920:-2",
+            "scale=2000:-2",
             "-c:v",
             "libx264",
             "-crf",
