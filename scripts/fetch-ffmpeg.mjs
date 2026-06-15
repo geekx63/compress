@@ -11,24 +11,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 const binariesDir = path.join(root, "src-tauri", "binaries");
 
+// BtbN no longer ships macOS builds; Tyrrrz/FFmpegBin covers all targets as zip.
 const RELEASE_BASE =
-  "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest";
+  "https://github.com/Tyrrrz/FFmpegBin/releases/latest/download";
 
 const TARGET_MAP = {
   "aarch64-apple-darwin": {
-    asset: "ffmpeg-master-latest-macosarm64-gpl.tar.xz",
+    asset: "ffmpeg-osx-arm64.zip",
     ext: "",
   },
   "x86_64-apple-darwin": {
-    asset: "ffmpeg-master-latest-macos64-gpl.tar.xz",
+    asset: "ffmpeg-osx-x64.zip",
     ext: "",
   },
   "x86_64-unknown-linux-gnu": {
-    asset: "ffmpeg-master-latest-linux64-gpl.tar.xz",
+    asset: "ffmpeg-linux-x64.zip",
     ext: "",
   },
   "x86_64-pc-windows-msvc": {
-    asset: "ffmpeg-master-latest-win64-gpl.zip",
+    asset: "ffmpeg-windows-x64.zip",
     ext: ".exe",
   },
 };
@@ -80,13 +81,8 @@ function findFileRecursive(dir, fileName) {
   return null;
 }
 
-function extractArchive(archivePath, tmpDir, asset) {
-  if (asset.endsWith(".zip")) {
-    // tar -xf works on macOS, Linux, and GitHub Actions Windows runners
-    execSync(`tar -xf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
-  } else {
-    execSync(`tar -xJf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
-  }
+function extractZip(archivePath, tmpDir) {
+  execSync(`tar -xf "${archivePath}" -C "${tmpDir}"`, { stdio: "inherit" });
 }
 
 async function main() {
@@ -117,7 +113,7 @@ async function main() {
   fs.rmSync(tmpDir, { recursive: true, force: true });
   fs.mkdirSync(tmpDir, { recursive: true });
 
-  extractArchive(archivePath, tmpDir, config.asset);
+  extractZip(archivePath, tmpDir);
 
   const ffmpegName = config.ext ? "ffmpeg.exe" : "ffmpeg";
   const found = findFileRecursive(tmpDir, ffmpegName);
